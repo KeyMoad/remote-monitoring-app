@@ -35,12 +35,12 @@ def read_service_status():
     return {"None"}
 
 class CronJob(BaseModel):
-    minute : str = "0"
-    hour : str = "0"
-    day_of_month : str = "*"
-    month : str = "*"
-    day_of_week : str = "0"
-    job : str
+    minute: str = "0"
+    hour: str = "0"
+    day_of_month: str = "*"
+    month: str = "*"
+    day_of_week: str = "0"
+    job: str
 
 @app.post("/api/v1/action/create_cronjob")
 def create_cron_job(cronjob_request: CronJob):
