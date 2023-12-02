@@ -2,12 +2,36 @@ version: '3.9'
 
 services:
   postgres:
+    container_name: postgres_container
     image: postgres:latest
     ports:
       - 5432:5432
     volumes:
-      - ~/apps/postgres:/var/lib/postgresql/data
+      - /app/pgdata:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=data
-      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=data_db
       - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+    networks:
+      - db_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - db_network
+
+volumes:
+  local_pgdata:
+  pgadmin-data:
+
+networks:
+  db_network: {}
