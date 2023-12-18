@@ -15,10 +15,14 @@ public class LoginActivity extends AppCompatActivity {
     TextView noAccountTextView;
     Button login;
     ImageView gitRepoLink;
+    DatabaseHelper dbHelper; // DatabaseHelper instance
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        dbHelper = new DatabaseHelper(this); // Initialize DatabaseHelper
 
         username = findViewById(R.id.editTextUsername);
         password = findViewById(R.id.editTextPassword);
@@ -39,32 +43,28 @@ public class LoginActivity extends AppCompatActivity {
         clickLogin();
     }
 
-    // Method for handle login logic
-    private void loginLogic(String username, String password) {
-        if ("salam".equals(username) && "salam".equals(password)) {
-            // Your successful login logic
-            Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(mainIntent);
-        } else {
-            // Incorrect credentials
-            Toast errorToast = Toast.makeText(LoginActivity.this, "Couldn't login with this information !!!", Toast.LENGTH_SHORT);
-            errorToast.show();
-        }
-    }
-
     // Method to handle login action
     private void clickLogin() {
         login.setOnClickListener(v -> {
-            if (username.getText().toString().trim().isEmpty()) {
+            String user = username.getText().toString().trim();
+            String pass = password.getText().toString().trim();
 
+            if (user.isEmpty()) {
                 username.setError("Please fill out this field");
-            } else if (password.getText().toString().trim().isEmpty()) {
-
+            } else if (pass.isEmpty()) {
                 password.setError("Please fill out this field");
             } else {
+                boolean isValidUser = dbHelper.checkUserCredentials(user, pass);
 
-                loginLogic(username.getText().toString(), password.getText().toString());
-
+                if (isValidUser) {
+                    // Successful login
+                    Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
+                    Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(mainIntent);
+                } else {
+                    // Incorrect credentials
+                    Toast.makeText(LoginActivity.this, "Couldn't login with this information!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
