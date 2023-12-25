@@ -6,4 +6,6 @@
     <string name="Login">Login</string>
     <string name="Register">Register</string>
     <string name="RegistrationPage">Registration Page</string>
+    <string name="navigation_drawer_open">Open Drawer</string>
+    <string name="navigation_drawer_close">Close Drawer</string>
 </resources>
