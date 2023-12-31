@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         sectionActions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Toast.makeText(MainActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
             }
         });
