@@ -1,51 +1,27 @@
-from fastapi import FastAPI
-from typing import Optional
-from pydantic import BaseModel
+from uvicorn import run
+from app import app
+from app.settings import (
+    DEBUG,
+    UVICORN_HOST,
+    UVICORN_PORT,
+    UVICORN_UDS,
+    UVICORN_SSL_CERTFILE,
+    UVICORN_SSL_KEYFILE,
+)
+import logging
 
-app = FastAPI()
-
-@app.get("/api/v1")
-def show_details():
-    return {
-        "detail": {
-            "version": "v0.1",
-            "api_version": "1",
-            "Athur": "KeyMoad",
-        }
-    }
-
-@app.get("/api/v1/status")
-def read_status():
-    return {"None"}
-
-@app.get("/api/v1/db_status")
-def read_db_status():
-    return {"None"}
-
-@app.get("/api/v1/monitor")
-def read_init_monitor_config():
-    return {"None"}
-
-@app.get("/api/v1/monitor/basic_metrics")
-def read_basic_metrics():
-    return {"None"}
-
-@app.get("/api/v1/monitor/service_status")
-def read_service_status():
-    return {"None"}
-
-class CronJob(BaseModel):
-    minute: str = "0"
-    hour: str = "0"
-    day_of_month: str = "*"
-    month: str = "*"
-    day_of_week: str = "0"
-    job: str
-
-@app.post("/api/v1/action/create_cronjob")
-def create_cron_job(cronjob_request: CronJob):
-    return {"None"}
-
-@app.post("/api/v1/action/service_action/{service}")
-def service_action(service: str, restart: bool = False, stop: bool = False, start: bool = False, enable: bool = False):
-    return {"None": service}
+if __name__ == "__main__":
+    try:
+        run(
+            app="main:app",
+            host=('0.0.0.0' if DEBUG else UVICORN_HOST),
+            port=UVICORN_PORT,
+            uds=(None if DEBUG else UVICORN_UDS),
+            ssl_certfile=UVICORN_SSL_CERTFILE,
+            ssl_keyfile=UVICORN_SSL_KEYFILE,
+            workers=1,
+            reload=DEBUG,
+            log_level=logging.DEBUG if DEBUG else logging.INFO
+        )
+    except FileNotFoundError:
+        pass
