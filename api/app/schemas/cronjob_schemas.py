@@ -1,7 +1,13 @@
-#!/usr/bin/env python3
-# coding: utf-8
 from pydantic import BaseModel
 
 
-class CronJob(BaseModel):
+class CronJobBase(BaseModel):
+    name: str
+    schedule: str
+    command: str
+
+class CronJobCreate(CronJobBase):
     pass
+
+class CronJob(CronJobBase):
+    id: int
