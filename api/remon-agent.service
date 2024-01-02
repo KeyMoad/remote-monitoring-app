@@ -1,5 +1,5 @@
 [Unit]
-Description=Limoo Agent
+Description=Remote Monitoring Agent
 After=network.target
 
 [Service]
@@ -11,7 +11,7 @@ RestartSec=5s
 TimeoutStartSec=900
 TimeoutStopSec=900
 RuntimeMaxSec=infinity
-SyslogIdentifier = limoo-agent
+SyslogIdentifier = remon-agent
 PIDFile=/tmp/limoo-agent.pid
 
 [Install]

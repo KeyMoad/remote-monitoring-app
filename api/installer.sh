@@ -6,13 +6,13 @@
 arglen=$#
 GITTOKENNAME=$2
 GITTOKEN=$3
-REPONAME="limoo-agent"
-REPOURL="https://$GITTOKENNAME:$GITTOKEN@git.baloot.io/sre/$REPONAME.git"
-SERVICE_NAME=limoo-agent
+REPONAME=""
+REPOURL=""
+SERVICE_NAME="remon-agent"
 PANEL_IP=
 IP=$(hostname -i)
 HOSTNAME=$(hostname -A)
-PYTHON_V=python3.8
+PYTHON_V="python3.8"
 
 
 function uninstall() {
@@ -58,15 +58,6 @@ function install() {
     sed -i "s/nametodir/$REPONAME/g" /opt/$REPONAME/.env > /dev/null
     mv /opt/$REPONAME/$SERVICE_NAME.service /etc/systemd/system/$SERVICE_NAME.service > /dev/null
     systemctl daemon-reload && systemctl enable $SERVICE_NAME >/dev/null 2>&1 && systemctl start $SERVICE_NAME > /dev/null
-
-
-    PORT=$(grep PORT /opt/$REPONAME/.env | cut -d " " -f 3)
-
-
-    # Config firewall
-    if [ -z $(grep -q "tcp|in|d=$PORT|s=$PANEL_IP" /etc/csf/csf.allow) ]; then
-        echo "tcp|in|d=$PORT|s=$PANEL_IP" >> /etc/csf/csf.allow
-    fi
 }
 
 

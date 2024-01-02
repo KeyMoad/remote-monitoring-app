@@ -3,7 +3,7 @@
 from fastapi import APIRouter,  Header, Depends
 from app.schemas.base import Status
 from app.utils import queue
-from app.routers.authenticate import validate_token
+from app.routers.auth import validate_token
 
 
 router = APIRouter()

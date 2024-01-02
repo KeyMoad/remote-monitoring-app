@@ -1,22 +1,22 @@
 #!/usr/bin/env python3
 # coding: utf-8
 from logging import getLogger
-from fastapi import FastAPI, Request, status as fa_status
+from fastapi import FastAPI, Request, status as fastApiStatus
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from app.routers import authenticate, lists, backup, status
+from app.routers import auth, status, action, listing
 from app.settings import *
 from app.utils import *
 
 app = FastAPI(
+    version="1.0.0",
     title=APP_TITLE,
     description=APP_DESCRIPTION,
     summary=APP_SUMMARY,
     docs_url=DOCS_URL,
     redoc_url=REDOC_URL,
-    version=VERSION,
     license_info=LICENSE_INFO,
 )
 
@@ -30,11 +30,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(router=authenticate.router, tags=["Auth"])
-app.include_router(router=lists.router, tags=["list"])
-app.include_router(router=backup.router, tags=["Actions"])
-app.include_router(router=backup.router, tags=["Actions"])
-app.include_router(router=status.router, tags=["Actions"])
+app.include_router(router=auth.router, tags=["Auth"])
+app.include_router(router=listing.router, tags=["list"])
+app.include_router(router=action.router, tags=["Actions"])
+app.include_router(router=status.router, tags=["Queue"])
 
 
 @app.exception_handler(RequestValidationError)
@@ -43,6 +42,6 @@ def validation_exception_handler(request: Request, exc: RequestValidationError):
     for error in exc.errors():
         details[error["loc"][-1]] = error.get("msg")
     return JSONResponse(
-        status_code=fa_status.HTTP_422_UNPROCESSABLE_ENTITY,
+        status_code=fastApiStatus.HTTP_422_UNPROCESSABLE_ENTITY,
         content=jsonable_encoder({"detail": details}),
     )

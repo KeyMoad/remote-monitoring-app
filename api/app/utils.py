@@ -1,22 +1,19 @@
 #!/usr/bin/env python3
 # coding: utf-8
-from app import settings
+import settings
 from json import load, dumps
 from uuid import uuid5, NAMESPACE_DNS
 from time import gmtime, strftime
 from subprocess import run
 from socket import gethostbyname, gethostname
 
-
 def give_time() -> str:
     time = strftime('%Y-%m-%d %H:%M:%S', gmtime())
     return time
 
-
 def id_generator(username: str, job_title: str, time: str = give_time()) -> str:
     g_id = str(uuid5(namespace=NAMESPACE_DNS, name=username+job_title+time))
     return g_id
-
 
 def queue(status: int, job_id: str, username: str = None, job_title: str = "") -> None:
     lock_file: str = settings.QUEUE_PATH
@@ -48,26 +45,15 @@ def queue(status: int, job_id: str, username: str = None, job_title: str = "") -
 
     return result
 
-
 def run_bash_command(command: str = " ") -> str:
     result = run(args=command, shell=True, executable='/bin/bash',
                  capture_output=True, text=True).stdout
     return result
 
-
 def server_hostname() -> str:
     hostname = gethostname()
     return hostname
 
-
 def server_ip() -> str:
     ip = gethostbyname(server_hostname())
     return ip
-
-
-def server_controlpanel() -> str:
-    command = 'if [[ -e /var/cpanel/users ]]; then  echo "cpanel"; elif [[ -e /usr/local/directadmin/data/users ]]; then echo "directadmin"; else "control panel is unknown!!!"; fi'
-    _ = run_bash_command(command=command)
-
-    controlpanel = _.strip()
-    return controlpanel
