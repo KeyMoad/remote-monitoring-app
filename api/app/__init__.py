@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
-from app.routers import auth, status, action, listing
+from app.routers import auth, action, listing
 from app.settings import *
 from app.utils import *
 
@@ -44,7 +44,6 @@ app.add_middleware(
 app.include_router(router=auth.router, tags=["Auth"])
 app.include_router(router=listing.router, tags=["list"])
 app.include_router(router=action.router, tags=["Actions"])
-app.include_router(router=status.router, tags=["Queue"])
 
 
 @app.exception_handler(RequestValidationError)

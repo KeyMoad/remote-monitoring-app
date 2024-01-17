@@ -54,16 +54,17 @@ def delete_cron(cron_job: CronJobDelete) -> bool:
 
     Returns:
         bool: True if the cron job was successfully deleted, False if the cron job was not found.
+        String: Full deleted job if deleted
     """
-    crons = list(CronTab())
+    crons = CronTab(user=CURRENT_USER)
 
     for job in crons:
         if job.comment == cron_job.name:
             crons.remove(job)
             crons.write()
-            return True
+            return True, job
 
-    return False
+    return False, None
 
 def list_cron_jobs() -> CronJobList:
     """

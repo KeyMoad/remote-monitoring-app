@@ -27,7 +27,7 @@ async def generate_passcode():
 
     raise HTTPException(
         status_code=status_code,
-        detail={"message": "Generating succeed", "passcode": code},
+        detail={"message": "Generating result", "passcode": code},
     )
 
 
