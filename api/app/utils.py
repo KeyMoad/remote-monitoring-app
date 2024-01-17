@@ -3,6 +3,7 @@ from json import load, dumps
 from uuid import uuid5, NAMESPACE_DNS
 from time import gmtime, strftime
 from subprocess import run
+from hashlib import sha512
 
 def getting_time() -> str:
     time = strftime('%Y-%m-%d %H:%M:%S', gmtime())
@@ -44,3 +45,6 @@ def run_bash_command(command: str = " ") -> str:
     result = run(args=command, shell=True, executable='/bin/bash',
                  capture_output=True, text=True).stdout
     return result
+
+def str_to_hash(*string: str) -> str:
+    return sha512(string="".join(string).encode(encoding="utf-8")).hexdigest()

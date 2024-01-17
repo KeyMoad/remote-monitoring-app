@@ -67,6 +67,9 @@ LICENSE_INFO = config(
 LOG_PATH = config(
     "LOG_PATH", default="../app.log", cast=str
 )
+PASSCODE_PATH = config(
+    "PASSCODE_PATH", default="../.pass", cast=str
+)
 DEBUG = config(
     "DEBUG", default=False, cast=bool
 )

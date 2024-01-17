@@ -5,6 +5,8 @@ from fastapi import FastAPI, Request, status as fastApiStatus
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from app.routers import auth, status, action, listing
 from app.settings import *
@@ -22,6 +24,15 @@ app = FastAPI(
 
 logger = getLogger('uvicorn.error')
 
+# Add middleware
+app.add_middleware(
+    GZipMiddleware,
+    minimum_size=100
+)
+app.add_middleware(
+    TrustedHostMiddleware,
+    allowed_hosts=["*.limoo.host", "*"]
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOW_ORIGINS,
