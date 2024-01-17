@@ -76,9 +76,6 @@ DEBUG = config(
 VERSION = config(
     "VERSION", cast=str, default="1.0.0"
 )
-QUEUE_PATH = config(
-    "QUEUE_PATH", default="../.app_jobs.lock", cast=str
-)
 SERVER_HOSTNAME = config(
     "SERVER_HOSTNME", default=server_hostname(), cast=str
 )
