@@ -27,7 +27,7 @@ load_dotenv(dotenv_path="../.env")
 
 # uvicorn Settings
 UVICORN_HOST = config("UVICORN_HOST", default="0.0.0.0")
-UVICORN_PORT = config("UVICORN_PORT", cast=int, default=9931)
+UVICORN_PORT = config("UVICORN_PORT", cast=int, default=9932)
 UVICORN_UDS = config("UVICORN_UDS", default=None)
 UVICORN_SSL_CERTFILE = config("UVICORN_SSL_CERTFILE", default=None)
 UVICORN_SSL_KEYFILE = config("UVICORN_SSL_KEYFILE", default=None)
@@ -64,11 +64,14 @@ LICENSE_INFO = config(
 )
 
 # Settings
+DATA_FILE = config(
+    "DATA_FILE", default="./data.json", cast=str
+)
 LOG_PATH = config(
-    "LOG_PATH", default="../app.log", cast=str
+    "LOG_PATH", default="./log/app.log", cast=str
 )
 PASSCODE_PATH = config(
-    "PASSCODE_PATH", default="../.pass", cast=str
+    "PASSCODE_PATH", default="./.pass", cast=str
 )
 DEBUG = config(
     "DEBUG", default=False, cast=bool

@@ -1,0 +1,7 @@
+{
+  "services": [
+    "filebeat.service",
+    "filestat_exporter.service",
+    "filestat.service"
+  ]
+}

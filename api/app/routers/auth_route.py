@@ -30,11 +30,9 @@ async def generate_passcode():
         detail={"message": "Generating result", "passcode": code},
     )
 
-
 @router.get("/passcode/update")
 async def update_passcode():
     pass
-
 
 @router.post("/token")
 async def login_for_access_token(data: Passcode):
@@ -51,7 +49,6 @@ async def login_for_access_token(data: Passcode):
     access_token = create_access_token(data={"sub": "master-phone", "pass": passcode})
 
     return {"data": {"token": access_token}}
-
 
 @router.get("/token/test")
 async def get_current_user(validate_token: Header = Depends(validate_token)):

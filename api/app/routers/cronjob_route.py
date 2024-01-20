@@ -1,10 +1,12 @@
-from time import sleep
 from fastapi import APIRouter, HTTPException, status as FastApiStatus
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 
 from app.schemas.cronjob_schemas import CronJob, CronJobCreate, CronJobDelete
+from app.schemas.cronjob_schemas import CronJobList
+
 from app.module.cronjob import create_cron, delete_cron
+from app.module.cronjob import list_cron_jobs
 
 
 router = APIRouter()
@@ -39,6 +41,20 @@ def add_cronjob(cronjob: CronJobCreate):
         content=content,
         status_code=FastApiStatus.HTTP_200_OK
     )
+
+@router.get("/cronjobs/", response_model=CronJobList)
+def get_cronjobs():
+    """
+    Retrieves a list of cron jobs.
+
+    Returns:
+        List[CronJob]: A list of cron jobs.
+
+    Example Usage:
+        GET /cronjobs/list
+    """
+    cron_jobs = list_cron_jobs()
+    return cron_jobs
 
 @router.delete("/cronjobs/{job_name}/")
 def delete_cronjob(job_name: str):
