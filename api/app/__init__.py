@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
-from app.routers import auth_route, cronjob_route,services_route
+from app.routers import auth_route, cronjob_route,services_route, metrics_route
 from app.settings import *
 from app.utils import *
 
@@ -44,6 +44,7 @@ app.add_middleware(
 app.include_router(router=auth_route.router, tags=["Auth"])
 app.include_router(router=cronjob_route.router, tags=["CronJob"])
 app.include_router(router=services_route.router, tags=["Services"])
+app.include_router(router=metrics_route.router, tags=["Metrics"])
 
 
 @app.exception_handler(RequestValidationError)
