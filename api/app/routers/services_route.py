@@ -109,7 +109,7 @@ def stop(service_name: str):
     )
 
 @router.post("/service/start/{service_name}")
-def stop(service_name: str):
+def start(service_name: str):
     result = action.start_service(service_name=service_name)
 
     content = {
