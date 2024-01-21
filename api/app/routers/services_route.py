@@ -6,11 +6,11 @@ from fastapi import HTTPException, status as FastApiStatus
 from typing import Annotated
 
 from app.schemas.services_schemas import ServiceList, AddService
-from app.module.services import list_all_services, list_services, add_new_service
+from app.module.services import *
 
 
 router = APIRouter()
-
+action = ServiceAction()
 
 @router.post("/service/add")
 def add_service(new_service: AddService):
@@ -20,7 +20,8 @@ def add_service(new_service: AddService):
             detail="No service name provided !"
         )
 
-    is_add = add_new_service(new_service.name)
+    valid_name = validate_service_name(name=new_service.name)
+    is_add = add_new_service(valid_name)
 
     content = {
         "detail": {
@@ -47,14 +48,74 @@ def get_service_list(list_type: Annotated[str, None] = None):
             GET /service/list
     """
     if list_type != None:
-        services: list = list_services(type=list_type)
+        if list_type == "active":
+            services: list = action.active_services()
+        elif list_type == "inactive":
+            services: list = action.inactive_services()
+        else:
+            raise HTTPException(
+                status_code=FastApiStatus.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="No type action provided !"
+            )
     else:
+        list_type = "all"
         services: list = list_all_services()
 
     content = {
         "detail": {
-            "message": "List of all services retrieved successfully",
+            "message": f"A list of {list_type} services retrieved successfully",
             "data": services
+        }
+    }
+    content = jsonable_encoder(content)
+
+    return JSONResponse(
+        content=content,
+        status_code=FastApiStatus.HTTP_200_OK
+    )
+
+@router.get("/service/{service_name}")
+def status(service_name: str):
+    result = action.service_status(service_name=service_name)
+
+    content = {
+        "detail": {
+            "message": f"{service_name} currently status.",
+            "data": result
+        }
+    }
+    content = jsonable_encoder(content)
+
+    return JSONResponse(
+        content=content,
+        status_code=FastApiStatus.HTTP_200_OK
+    )
+
+@router.post("/service/stop/{service_name}")
+def stop(service_name: str):
+    result = action.stop_service(service_name=service_name)
+
+    content = {
+        "detail": {
+            "message": f"{service_name} stopping job status",
+            "data": result
+        }
+    }
+    content = jsonable_encoder(content)
+
+    return JSONResponse(
+        content=content,
+        status_code=FastApiStatus.HTTP_200_OK
+    )
+
+@router.post("/service/start/{service_name}")
+def stop(service_name: str):
+    result = action.start_service(service_name=service_name)
+
+    content = {
+        "detail": {
+            "message": f"{service_name} starting job status",
+            "data": result
         }
     }
     content = jsonable_encoder(content)

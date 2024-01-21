@@ -1,5 +1,5 @@
 from time import gmtime, strftime
-from subprocess import run
+from subprocess import run, CalledProcessError
 from hashlib import sha512
 from json import dump as dump_json, load as load_json, JSONDecodeError
 from os.path import exists as is_path_exists
@@ -11,14 +11,20 @@ def get_time() -> str:
     time = strftime('%Y-%m-%d %H:%M:%S', gmtime())
     return time
 
-def run_bash_command(command: str = " ") -> str:
-    result = run(args=command,
-                 shell=True,
-                 executable='/bin/bash',
-                 capture_output=True,
-                 text=True).stdout
+def run_bash(command: str = " ") -> tuple:
+    try:
+        result = run(args=command,
+                     shell=True,
+                     executable='/bin/bash',
+                     capture_output=True,
+                     text=True)
 
-    return str(result)
+        exit_code = result.returncode
+        result_output = result.stdout.strip()
+
+        return result_output, exit_code
+    except CalledProcessError as e:
+        return None, e.returncode
 
 def str_to_hash(*string: str) -> str:
     return sha512(string="".join(string).encode(encoding="utf-8")).hexdigest()
@@ -85,7 +91,12 @@ class Data:
         try:
             with open(data_file, "r") as file:
                 data: dict = load_json(file)
-                return data
+
+                if key:
+                    return data[key]
+                else:
+                    return data
+
         except FileNotFoundError:
             Data.initialize(data_file=data_file)
             return {key: []} if key else {}

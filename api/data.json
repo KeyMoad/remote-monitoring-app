@@ -2,6 +2,9 @@
   "services": [
     "filebeat.service",
     "filestat_exporter.service",
-    "filestat.service"
+    "filestat.service",
+    "node_exporter.service",
+    "aliakbar.service",
+    "docker.service"
   ]
 }

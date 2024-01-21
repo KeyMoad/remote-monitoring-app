@@ -8,8 +8,7 @@ from app.settings import (
     UVICORN_PORT,
     UVICORN_UDS,
     UVICORN_SSL_CERTFILE,
-    UVICORN_SSL_KEYFILE,
-    DATA_FILE
+    UVICORN_SSL_KEYFILE
 )
 from app.utils import Data
 
