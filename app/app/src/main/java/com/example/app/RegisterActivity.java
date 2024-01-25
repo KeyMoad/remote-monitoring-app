@@ -55,6 +55,10 @@ public class RegisterActivity extends AppCompatActivity {
         return m.matches();
     }
 
+    private static String isValidHost(String host) {
+        return "a";
+    }
+
     private void registerUser() {
         String user = username.getText().toString().trim();
         String pass = password.getText().toString().trim();
