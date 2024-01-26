@@ -1,10 +1,10 @@
-from fastapi import APIRouter, HTTPException, status as FastApiStatus
+from fastapi import APIRouter, HTTPException, status as FastApiStatus, Header, Depends
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 
 from app.schemas.cronjob_schemas import CronJob, CronJobCreate, CronJobDelete
 from app.schemas.cronjob_schemas import CronJobList
-
+from app.module.authentication import validate_token
 from app.module.cronjob import create_cron, delete_cron
 from app.module.cronjob import list_cron_jobs
 
@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 @router.post("/cronjobs/")
-def add_cronjob(cronjob: CronJobCreate):
+def add_cronjob(cronjob: CronJobCreate, validate_token: Header = Depends(validate_token)):
     """
     Create a new cron job.
 

@@ -1,25 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/primary"
     android:alpha="0.8"
-    tools:context=".MainActivity"
-    >
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
+    tools:context=".MainActivity">
+
+    <!-- Guideline for vertical center -->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineVerticalCenter"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <!-- Section for metrics -->
+    <androidx.cardview.widget.CardView
         android:id="@+id/section_metrics"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:cardCornerRadius="20dp"
-        android:layout_marginTop="-20dp">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/guidelineVerticalCenter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical">
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -74,18 +89,23 @@
                 android:textColor="@color/primary"
                 android:textSize="16sp" />
 
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- Section for action -->
     <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
+        android:id="@+id/section_action"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         app:cardCornerRadius="20dp"
-        android:layout_below="@id/section_metrics"
-        android:id="@+id/section_action">
+        app:layout_constraintTop_toBottomOf="@id/section_metrics"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.5">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -101,15 +121,19 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- Section for cron -->
     <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
+        android:id="@+id/section_cron"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         app:cardCornerRadius="20dp"
-        android:layout_below="@id/section_action"
-        android:id="@+id/section_cron">
+        app:layout_constraintTop_toBottomOf="@id/section_action"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.5">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -125,15 +149,19 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- Section for delete -->
     <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
+        android:id="@+id/section_delete"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="0dp"
         android:layout_marginLeft="28dp"
         android:layout_marginRight="28dp"
         app:cardCornerRadius="20dp"
-        android:layout_below="@id/section_cron"
-        android:id="@+id/section_delete">
+        app:layout_constraintTop_toBottomOf="@id/section_cron"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -149,6 +177,5 @@
                 android:src="@drawable/delete" />
 
         </LinearLayout>
-
     </androidx.cardview.widget.CardView>
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

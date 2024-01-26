@@ -17,15 +17,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_NAME = "Users";
     private static final String COLUMN_USERNAME = "username";
     private static final String COLUMN_PASSWORD = "password";
-    private static final String COLUMN_SALT = "salt";
     private static final String COLUMN_HOST = "host";
     private static final String COLUMN_PASSPHRASE = "passphrase";
 
+    private static final String SALT = "XCzoTsTx;I@i}B>@DivGP+16ZPtD@1*Y&5*^OXSi14Ym,l+8Cat;+lSZPa7v.RN";
     // Create table query
     private static final String CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + " (" +
             COLUMN_USERNAME + " TEXT PRIMARY KEY," +
             COLUMN_PASSWORD + " TEXT," +
-            COLUMN_SALT + " TEXT," +
             COLUMN_HOST + " TEXT," +
             COLUMN_PASSPHRASE + " TEXT )";
 
@@ -69,14 +68,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // Method to generate a salt
-    private String generateSalt() {
-        SecureRandom random = new SecureRandom();
-        byte[] saltBytes = new byte[16];
-        random.nextBytes(saltBytes);
-        return bytesToHex(saltBytes);
-    }
-
     // Helper method to convert byte array to hexadecimal string
     private String bytesToHex(byte[] bytes) {
         StringBuilder hexString = new StringBuilder(2 * bytes.length);
@@ -96,17 +87,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             return false;
         }
 
-        // Generate a salt
-        String salt = generateSalt();
-
         // Hash the password using salt
-        String hashedPassword = hashPassword(password, salt);
+        String hashedPassword = hashPassword(password, SALT);
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COLUMN_USERNAME, username);
         values.put(COLUMN_PASSWORD, hashedPassword);
-        values.put(COLUMN_SALT, salt);
         values.put(COLUMN_HOST, host);
         values.put(COLUMN_PASSPHRASE, passphrase);
 
@@ -140,20 +127,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            cursor = db.rawQuery("SELECT " + COLUMN_PASSWORD + ", " + COLUMN_SALT + " FROM " +
+            cursor = db.rawQuery("SELECT " + COLUMN_PASSWORD + " FROM " +
                     TABLE_NAME + " WHERE " + COLUMN_USERNAME + "=?", new String[]{username});
 
             if (cursor != null && cursor.moveToFirst()) {
                 int passwordIndex = cursor.getColumnIndex(COLUMN_PASSWORD);
-                int saltIndex = cursor.getColumnIndex(COLUMN_SALT);
 
-                if (passwordIndex >= 0 && saltIndex >= 0) {
+                if (passwordIndex >= 0) {
                     String hashedPasswordFromDb = cursor.getString(passwordIndex);
-                    String salt = cursor.getString(saltIndex);
 
-                    if (hashedPasswordFromDb != null && salt != null) {
+                    if (hashedPasswordFromDb != null && SALT != null) {
                         // Hash the input password with the retrieved salt
-                        String hashedInputPassword = hashPassword(password, salt);
+                        String hashedInputPassword = hashPassword(password, SALT);
 
                         // Compare the stored hashed password with the hashed input password
                         return hashedPasswordFromDb.equals(hashedInputPassword);
@@ -169,5 +154,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         return false;
+    }
+
+    public boolean deleteUser(String username) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int result = db.delete(TABLE_NAME, COLUMN_USERNAME + "=?", new String[]{username});
+        db.close();
+
+        // Tru if Successful deletion
+        return result > 0;
     }
 }

@@ -59,6 +59,13 @@ public class LoginActivity extends AppCompatActivity {
                 if (isValidUser) {
                     // Successful login
                     Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
+
+                    // Store the username in shared preferences
+                    getSharedPreferences("MyPrefs", MODE_PRIVATE)
+                            .edit()
+                            .putString("username", user)
+                            .apply();
+
                     Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(mainIntent);
                 } else {

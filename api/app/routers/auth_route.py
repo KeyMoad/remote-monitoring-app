@@ -30,10 +30,6 @@ async def generate_passcode():
         detail={"message": "Generating result", "passcode": code},
     )
 
-@router.get("/passcode/update")
-async def update_passcode():
-    pass
-
 @router.post("/token")
 async def login_for_access_token(data: Passcode):
     passcode = data.passcode

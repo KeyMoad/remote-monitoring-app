@@ -11,21 +11,18 @@ import android.widget.Toast;
 
 import org.json.JSONObject;
 
-public class MainActivity extends AppCompatActivity implements APIHandler.MetricsCallback {
-
-    private APIHandler apiHandler;
+public class MainActivity extends AppCompatActivity {
 
     // Replace these with the actual IDs from your XML layout
     private TextView loadAverageTextView;
     private TextView cpuLoadTextView;
     private TextView memoryUsageTextView;
+    private DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        apiHandler = new APIHandler(this);
 
         // Find the CardViews
         CardView serviceSectionCardView = findViewById(R.id.section_action);
@@ -37,6 +34,9 @@ public class MainActivity extends AppCompatActivity implements APIHandler.Metric
         cpuLoadTextView = findViewById(R.id.cpu_load_textview);
         memoryUsageTextView = findViewById(R.id.memory_usage_textview);
 
+        // Retrieve the logged-in username from shared preferences
+        String loggedInUsername = getSharedPreferences("MyPrefs", MODE_PRIVATE).getString("username", null);
+
         serviceSectionCardView.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, ServiceActivity.class);
             startActivity(intent);
@@ -46,35 +46,22 @@ public class MainActivity extends AppCompatActivity implements APIHandler.Metric
             Intent intent = new Intent(MainActivity.this, CronActivity.class);
             startActivity(intent);
         });
-        apiHandler.fetchMetrics();
-    }
 
-    @SuppressLint("DefaultLocale")
-    @Override
-    public void onMetricsFetched(JSONObject metrics) {
-        if (metrics != null) {
-            try {
-                // Update TextViews with fetched data
-                JSONObject loadAverage = metrics.getJSONObject("load_average");
-                loadAverageTextView.setText(String.format("1min: %.2f  -  5min: %.2f  -  15min: %.2f",
-                        loadAverage.getDouble("load1"),
-                        loadAverage.getDouble("load5"),
-                        loadAverage.getDouble("load15")));
+        deleteSectionCardView.setOnClickListener(v -> {
+            dbHelper = new DatabaseHelper(this);
 
-                double cpuLoad = metrics.getDouble("cpu_load");
-                cpuLoadTextView.setText(String.format("%.2f", cpuLoad));
+            // Use the logged-in username for deletion
+            if (loggedInUsername != null) {
+                dbHelper.deleteUser(loggedInUsername);
 
-                JSONObject memoryUsage = metrics.getJSONObject("memory_usage");
-                memoryUsageTextView.setText(String.format("Total: %dGB  -  Used: %dGB  -  Free: %dGB",
-                        memoryUsage.getLong("total") / (1024 * 1024 * 1024),
-                        memoryUsage.getLong("used") / (1024 * 1024 * 1024),
-                        memoryUsage.getLong("free") / (1024 * 1024 * 1024)));
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(MainActivity.this, "Error processing metrics data", Toast.LENGTH_SHORT).show();
+                // Redirect to login page
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+
+                Toast.makeText(MainActivity.this, "Deletion succeed !", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "Deletion failed !", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            Toast.makeText(MainActivity.this, "Error fetching metrics", Toast.LENGTH_SHORT).show();
-        }
+        });
     }
 }
