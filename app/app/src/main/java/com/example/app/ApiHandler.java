@@ -5,14 +5,15 @@ import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ApiHandler {
     private final RequestQueue requestQueue;
@@ -25,50 +26,94 @@ public class ApiHandler {
         this.username = username;
     }
 
-    public void api(String path, ResponseCallback callback) {
+    public void api(String path, HttpMethod method, Map<String, String> headers, Map<String, String> params, String requestBody, ResponseCallback callback) {
         String url = getCompleteUrl(path, this.username);
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                Request.Method.GET,
-                url,
-                null,
-                response -> {
-                    // Print the received JSON response for debugging
-                    Log.d("ApiHandler", "Received JSON: " + response.toString());
+        // Create the appropriate type of request based on the specified HttpMethod
+        Request<?> request = null;
+        switch (method) {
+            case GET:
+                url = addParamsToUrl(url, params);
+                request = new StringRequest(Request.Method.GET, url,
+                        callback::onSuccess,
+                        error -> callback.onError(error.toString()))
+                {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        return headers;
+                    }
+                };
+                break;
+            case POST:
+                request = new StringRequest(Request.Method.POST, url,
+                        callback::onSuccess,
+                        error -> callback.onError(convertVolleyErrorToString(error))) {
+                    @Override
+                    public byte[] getBody() {
+                        return requestBody != null ? requestBody.getBytes() : null;
+                    }
 
-                    // Pass the JSON response to the callback
-                    callback.onSuccess(response.toString());
-                },
-                error -> callback.onError(error.toString()));
+                    @Override
+                    public String getBodyContentType() {
+                        return "application/json";
+                    }
 
-        requestQueue.add(jsonObjectRequest);
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        return headers;
+                    }
+                };
+                break;
+            case DELETE:
+                url = addParamsToUrl(url, params);
+                request = new StringRequest(Request.Method.DELETE, url,
+                        callback::onSuccess,
+                        error -> callback.onError(error.toString()))
+                {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        return headers;
+                    }
+                };
+                break;
+        }
+
+        if (request != null) {
+            // Add the request to the Volley request queue
+            requestQueue.add(request);
+        }
     }
 
-    public void apiWithToken(String path, ResponseCallback callback) {
-        // Fetch the token first using the api method
-        api("/token", new ResponseCallback() {
+    public void apiWithToken(String path, HttpMethod method, Map<String, String> params, String requestBody, ResponseCallback callback) {
+        // Fetch the passcode first
+        String passcode = databaseHelper.getPasscodeByUsername(username);
+
+        if (passcode == null || passcode.isEmpty()) {
+            callback.onError("Passcode not available");
+            return;
+        }
+
+        Log.d("apiWithToken", "PassCode: " + passcode);
+
+        // Use HashMap for mutable headers
+        final Map<String, String> headers = new HashMap<>();
+
+        // Now, use the passcode in the token request
+        api("/token", HttpMethod.POST, headers, null, "{\"passcode\":\"" + passcode + "\"}", new ResponseCallback() {
             @Override
             public void onSuccess(String tokenResponse) {
                 try {
                     // Parse the JSON response to extract the token
                     JSONObject jsonResponse = new JSONObject(tokenResponse);
+                    Log.d("apiWithToken", "jsonResponse: " + jsonResponse);
                     String token = jsonResponse.getJSONObject("data").getString("token");
 
-                    // Use the fetched token in the subsequent API call
-                    String url = getCompleteUrl(path, username);
+                    // Create headers for the subsequent API call
+                    headers.put("Authorization", "Bearer " + token);
+                    Log.d("apiWithToken", "HEADERS: " + headers);
 
-                    StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                            callback::onSuccess,
-                            error -> callback.onError(error.toString())) {
-                        // Override this method to include headers
-                        @Override
-                        public java.util.Map<String, String> getHeaders() {
-                            java.util.Map<String, String> headers = new java.util.HashMap<>();
-                            headers.put("Authorization", "Bearer " + token);
-                            return headers;
-                        }
-                    };
-                    requestQueue.add(stringRequest);
+                    // Use the fetched token in the subsequent API call
+                    api(path, method, headers, params, requestBody, callback);
                 } catch (JSONException e) {
                     callback.onError("Error parsing JSON");
                 }
@@ -76,10 +121,25 @@ public class ApiHandler {
 
             @Override
             public void onError(String error) {
+                Log.d("apiWithToken", "ERROR: " + error);
                 // Handle error while fetching the token
                 callback.onError(error);
             }
         });
+    }
+
+    private String addParamsToUrl(String url, Map<String, String> params) {
+        if (params != null && !params.isEmpty()) {
+            StringBuilder paramString = new StringBuilder();
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                if (paramString.length() > 0) {
+                    paramString.append("&");
+                }
+                paramString.append(entry.getKey()).append("=").append(entry.getValue());
+            }
+            url = url + "?" + paramString.toString();
+        }
+        return url;
     }
 
     private String getCompleteUrl(String path, String username) {
@@ -87,9 +147,20 @@ public class ApiHandler {
         return host + path;
     }
 
+    private String convertVolleyErrorToString(VolleyError error) {
+        return (error != null && error.getMessage() != null) ? error.getMessage() : "Unknown error";
+    }
+
     // Define an interface for handling API responses
     public interface ResponseCallback {
         void onSuccess(String response);
         void onError(String error);
+    }
+
+    // Enum to represent HTTP methods
+    public enum HttpMethod {
+        GET,
+        POST,
+        DELETE
     }
 }

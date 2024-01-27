@@ -12,8 +12,11 @@ from app.module.cronjob import list_cron_jobs
 router = APIRouter()
 
 
-@router.post("/cronjobs/")
-def add_cronjob(cronjob: CronJobCreate, validate_token: Header = Depends(validate_token)):
+@router.post("/cronjobs")
+def add_cronjob(
+    cronjob: CronJobCreate,
+    validate_token: Header = Depends(validate_token)
+):
     """
     Create a new cron job.
 
@@ -42,8 +45,10 @@ def add_cronjob(cronjob: CronJobCreate, validate_token: Header = Depends(validat
         status_code=FastApiStatus.HTTP_200_OK
     )
 
-@router.get("/cronjobs/", response_model=CronJobList)
-def get_cronjobs():
+@router.get("/cronjobs", response_model=CronJobList)
+def get_cronjobs(
+    validate_token: Header = Depends(validate_token)
+):
     """
     Retrieves a list of cron jobs.
 
@@ -56,8 +61,11 @@ def get_cronjobs():
     cron_jobs = list_cron_jobs()
     return cron_jobs
 
-@router.delete("/cronjobs/{job_name}/")
-def delete_cronjob(job_name: str):
+@router.delete("/cronjobs/{job_name}")
+def delete_cronjob(
+    job_name: str,
+    validate_token: Header = Depends(validate_token)
+):
     """
     Deletes a cron job with the specified job ID.
 

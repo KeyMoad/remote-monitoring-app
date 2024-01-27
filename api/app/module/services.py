@@ -4,7 +4,7 @@ from app.utils import run_bash, Data
 
 
 class ServiceAction():
-    def __init__(self, data: list = Data.load("services")) -> None:
+    def __init__(self, data: list) -> None:
         """
         Database constructor initializes the Database object with a specified data file.
 
@@ -59,7 +59,7 @@ class ServiceAction():
                 detail="Provided service is not installed in server !"
             )
         else:
-            return status
+            return True
 
     def start_service(self, service_name: str):
         if not service_name in self.data:
@@ -80,7 +80,7 @@ class ServiceAction():
                 detail="Provided service is not installed in server !"
             )
         else:
-            return status
+            return True
 
     def active_services(self):
         status, exit_code = run_bash("systemctl --quiet --no-pager list-units --state=active --type=service --no-legend")

@@ -8,7 +8,6 @@ import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,8 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseHelper dbHelper;
     private ApiHandler apiHandler;
     private final Handler handler = new Handler();
-    private final long initialDelayMillis = 0;
-    private final long delayMillis = 20 * 1000;
+    private final long delayMillis = 15 * 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +46,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
-
         apiHandler = new ApiHandler(this, loggedInUsername);
-        // Fetch metrics and memory usage and load average using ApiHandler immediately
-        fetchCpuLoadAvg();
-        fetchMemoryUsage();
-        fetchLoadAverage();
 
         // Set up listeners for CardViews
         serviceSectionCardView.setOnClickListener(v -> {
@@ -77,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Schedule periodic fetching after the initial fetch
+        long initialDelayMillis = 0;
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -89,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchCpuLoadAvg() {
-        apiHandler.api("/metrics/cpu_load", new ApiHandler.ResponseCallback() {
+        apiHandler.apiWithToken("/metrics/cpu_load", ApiHandler.HttpMethod.GET, null, null, new ApiHandler.ResponseCallback() {
             @Override
             public void onSuccess(String response) {
                 updateCpuLoadTextView(response);
@@ -97,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
-                Toast.makeText(getApplicationContext(), "Metrics Error: " + error, Toast.LENGTH_LONG).show();
+                handleApiError("Metrics Error", error);
             }
         });
     }
@@ -117,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchMemoryUsage() {
-        apiHandler.api("/metrics/memory_usage", new ApiHandler.ResponseCallback() {
+        apiHandler.apiWithToken("/metrics/memory_usage", ApiHandler.HttpMethod.GET, null, null, new ApiHandler.ResponseCallback() {
             @Override
             public void onSuccess(String response) {
                 updateMemoryUsageTextView(response);
@@ -125,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
-                Toast.makeText(getApplicationContext(), "Memory Usage Error: " + error, Toast.LENGTH_LONG).show();
+                handleApiError("Memory Usage Error", error);
             }
         });
     }
@@ -154,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchLoadAverage() {
-        apiHandler.api("/metrics/load_average", new ApiHandler.ResponseCallback() {
+        apiHandler.apiWithToken("/metrics/load_average", ApiHandler.HttpMethod.GET, null, null, new ApiHandler.ResponseCallback() {
             @Override
             public void onSuccess(String response) {
                 updateLoadAverageTextView(response);
@@ -162,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(String error) {
-                Toast.makeText(getApplicationContext(), "Load Average Error: " + error, Toast.LENGTH_LONG).show();
+                handleApiError("Load Average Error", error);
             }
         });
     }
@@ -181,6 +175,34 @@ public class MainActivity extends AppCompatActivity {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    private void handleApiError(String prefix, String error) {
+        Toast.makeText(getApplicationContext(), prefix + ": " + error, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onPause() {
+        // Remove callbacks when the activity is not visible
+        handler.removeCallbacksAndMessages(null);
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Resume periodic fetching when the activity becomes visible
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!isDestroyed()) {
+                    fetchCpuLoadAvg();
+                    fetchMemoryUsage();
+                    fetchLoadAverage();
+                    handler.postDelayed(this, delayMillis);
+                }
+            }
+        }, delayMillis);
     }
 
     @Override

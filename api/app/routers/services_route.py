@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status as FastApiStatus
+from fastapi import APIRouter, status as FastApiStatus, Header, Depends
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException, status as FastApiStatus
@@ -7,13 +7,17 @@ from typing import Annotated
 
 from app.schemas.services_schemas import ServiceList, AddService
 from app.module.services import *
+from app.module.authentication import validate_token
 
 
 router = APIRouter()
-action = ServiceAction()
+action = ServiceAction(Data.load("services"))
 
 @router.post("/service/add")
-def add_service(new_service: AddService):
+def add_service(
+    new_service: AddService,
+    validate_token: Header = Depends(validate_token)
+):
     if not new_service:
         raise HTTPException(
             status_code=FastApiStatus.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -37,7 +41,10 @@ def add_service(new_service: AddService):
     )
 
 @router.get("/service/list", response_model=ServiceList)
-def get_service_list(list_type: Annotated[str, None] = None):
+def get_service_list(
+    list_type: Annotated[str, None] = None,
+    validate_token: Header = Depends(validate_token)
+):
     """
     Retrieves a list of services that is in server
 
@@ -75,7 +82,10 @@ def get_service_list(list_type: Annotated[str, None] = None):
     )
 
 @router.get("/service/{service_name}")
-def status(service_name: str):
+def status(
+    service_name: str,
+    validate_token: Header = Depends(validate_token)
+):
     result = action.service_status(service_name=service_name)
 
     content = {
@@ -92,7 +102,10 @@ def status(service_name: str):
     )
 
 @router.post("/service/stop/{service_name}")
-def stop(service_name: str):
+def stop(
+    service_name: str,
+    validate_token: Header = Depends(validate_token)
+):
     result = action.stop_service(service_name=service_name)
 
     content = {
@@ -109,7 +122,10 @@ def stop(service_name: str):
     )
 
 @router.post("/service/start/{service_name}")
-def start(service_name: str):
+def start(
+    service_name: str,
+    validate_token: Header = Depends(validate_token)
+):
     result = action.start_service(service_name=service_name)
 
     content = {

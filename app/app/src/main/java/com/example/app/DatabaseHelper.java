@@ -185,4 +185,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.d("getHostByHostname", "Final Host: " + host);
         return host;
     }
+
+    public String getPasscodeByUsername(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT " + COLUMN_PASSPHRASE + " FROM " +
+                TABLE_NAME + " WHERE " + COLUMN_USERNAME + "=?", new String[]{username});
+
+        String pass = "";
+        if (cursor != null && cursor.moveToFirst()) {
+            int passIndex = cursor.getColumnIndex(COLUMN_PASSPHRASE);
+            if (passIndex >= 0) {
+                pass = cursor.getString(passIndex);
+            }
+            cursor.close();
+        }
+        db.close();
+
+        return pass;
+    }
 }

@@ -1,15 +1,18 @@
-from fastapi import APIRouter, HTTPException, status as FastApiStatus
+from fastapi import APIRouter, HTTPException, status as FastApiStatus, Header, Depends
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 
 from app.module.metrics import gather_cpu_load, gather_memory_usage, gather_load_average
+from app.module.authentication import validate_token
 
 
 router = APIRouter()
 
 
 @router.get("/metrics/cpu_load")
-def get_cpu_load():
+def get_cpu_load(
+    validate_token: Header = Depends(validate_token)
+):
     load = gather_cpu_load()
     content = {
         "detail": {
@@ -25,7 +28,9 @@ def get_cpu_load():
     )
 
 @router.get("/metrics/memory_usage")
-def get_memory_usage():
+def get_memory_usage(
+    validate_token: Header = Depends(validate_token)
+):
     usage = gather_memory_usage()
     content = {
         "detail": {
@@ -41,7 +46,9 @@ def get_memory_usage():
     )
 
 @router.get("/metrics/load_average")
-def get_load_avg():
+def get_load_avg(
+    validate_token: Header = Depends(validate_token)
+):
     average = gather_load_average()
     content = {
         "detail": {

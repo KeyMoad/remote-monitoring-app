@@ -98,20 +98,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="text" />
-
-                <!-- Passphrase -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:alpha="0.7"
-                    android:text="Passphrase"
-                    android:textStyle="bold"
-                    android:paddingTop="12dp" />
-                <EditText
-                    android:id="@+id/editTextPassphrase"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPassword" />
             </LinearLayout>
 
             <!-- Buttons -->

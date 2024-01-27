@@ -5,6 +5,11 @@
     "filestat.service",
     "node_exporter.service",
     "aliakbar.service",
-    "docker.service"
+    "docker.service",
+    "akbar.service",
+    "akbar.servic5e.service",
+    "test3.service",
+    "ali.service",
+    "aliiii.service"
   ]
 }

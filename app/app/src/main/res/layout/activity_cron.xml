@@ -146,11 +146,28 @@
                 android:choiceMode="singleChoice"
                 android:listSelector="@android:color/darker_gray"/>
 
-            <Button
-                android:id="@+id/buttonDeleteCron"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Delete Cron"/>
+                android:orientation="horizontal">
+
+                <!-- Button for deleting the selected cron -->
+                <Button
+                    android:id="@+id/buttonDeleteCron"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginRight="5dp"
+                    android:text="Delete Cron"/>
+
+                <!-- Button for reloading the cron list (smaller size) -->
+                <Button
+                    android:id="@+id/buttonReloadCronList"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:text="Reload"/>
+            </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
