@@ -1,73 +1,106 @@
-#!/usr/bin/env python3
-# coding: utf-8
-from app import settings
-from json import load, dumps
-from uuid import uuid5, NAMESPACE_DNS
 from time import gmtime, strftime
-from subprocess import run
-from socket import gethostbyname, gethostname
+from subprocess import run, CalledProcessError
+from hashlib import sha512
+from json import dump as dump_json, load as load_json, JSONDecodeError
+from os.path import exists as is_path_exists
+
+from app.settings import DATA_FILE
 
 
-def give_time() -> str:
+def get_time() -> str:
     time = strftime('%Y-%m-%d %H:%M:%S', gmtime())
     return time
 
+def run_bash(command: str = " ") -> tuple:
+    try:
+        result = run(args=command,
+                     shell=True,
+                     executable='/bin/bash',
+                     capture_output=True,
+                     text=True)
 
-def id_generator(username: str, job_title: str, time: str = give_time()) -> str:
-    g_id = str(uuid5(namespace=NAMESPACE_DNS, name=username+job_title+time))
-    return g_id
+        exit_code = result.returncode
+        result_output = result.stdout.strip()
 
+        return result_output, exit_code
+    except CalledProcessError as e:
+        return None, e.returncode
 
-def queue(status: int, job_id: str, username: str = None, job_title: str = "") -> None:
-    lock_file: str = settings.QUEUE_PATH
-    with open(file=lock_file, mode="r+") as raw:
-        data: dict = load(raw)
-        if status == 1:
-            for job in list(data):
-                job_data = data[job]
-                if (username not in job_data.keys()) or (job_title not in job_data[username]):
-                    data[job_id] = {username: job_title}
-                    result = {"job add": True, "job id": job_id,
-                              "job data": data[job_id]}
-        elif status == 0:
-            if job_id in data.keys():
-                result = {"job rm": True, "job id": job_id,
-                          "job data": data[job_id]}
-                del data[job_id]
-        elif status == 2:
-            if job_id in data.keys():
-                result = {"job runing": True,
-                          "job id": job_id, "job data": data[job_id]}
-            else:
-                result = {"job runing": False, "job id": job_id}
-        else:
-            result = {"job add": False, "message": "status is not defined"}
-        raw.seek(0)
-        raw.truncate()
-        raw.write(dumps(data, indent=4))
+def str_to_hash(*string: str) -> str:
+    return sha512(string="".join(string).encode(encoding="utf-8")).hexdigest()
 
-    return result
+class Data:
+    @staticmethod
+    def initialize(data_file: str = DATA_FILE):
+        """
+        Initialize method creates an initial data structure and writes it to a JSON file.
+        """
+        # Check if the data file already exists
+        if not is_path_exists(data_file):
+            # Initial data structure with three keys
+            data = {
+                "services": []
+            }
 
+            # Writing the initial data to a JSON file
+            with open(data_file, 'w') as file:
+                dump_json(data, file, indent=2)
 
-def run_bash_command(command: str = " ") -> str:
-    result = run(args=command, shell=True, executable='/bin/bash',
-                 capture_output=True, text=True).stdout
-    return result
+    @staticmethod
+    def write(key: str, value: str, data_file: str = DATA_FILE):
+        """
+        Static method to write data to the specified key within the data file.
+        Args:
+        - key (str): The key within the data file.
+        - value (str): The value to be stored.
+        - data_file (str): The path to the data file. Defaults to Const.DATA_FILE.
+        Returns:
+        - 0: Means the write process is failed.
+        - 1: Means the write process is succeed.
+        - 2: Means the value is already exists.
+        """
+        loaded_data = Data.load()
+        try:
+            if not loaded_data:
+                loaded_data = {
+                    "services": []
+                }
 
+            if value in loaded_data[key]:
+                return 2
 
-def server_hostname() -> str:
-    hostname = gethostname()
-    return hostname
+            loaded_data[key].append(value)
 
+            with open(data_file, 'w') as file:
+                dump_json(loaded_data, file, indent=2)
 
-def server_ip() -> str:
-    ip = gethostbyname(server_hostname())
-    return ip
+            return 1
+        except Exception as e:
+            print(f"Error writing to file: {e}")
+            return 0
 
+    @staticmethod
+    def load(key: str = None, data_file: str = DATA_FILE):
+        """
+        Load method reads data from the specified key within the data file.
+        Args:
+        - key (str): The key within the data file. If not provided, returns the entire data.
+        Returns:
+        - dict or None: The data associated with the specified key or None if the key is invalid.
+        """
+        try:
+            with open(data_file, "r") as file:
+                data: dict = load_json(file)
 
-def server_controlpanel() -> str:
-    command = 'if [[ -e /var/cpanel/users ]]; then  echo "cpanel"; elif [[ -e /usr/local/directadmin/data/users ]]; then echo "directadmin"; else "control panel is unknown!!!"; fi'
-    _ = run_bash_command(command=command)
+                if key:
+                    return data[key]
+                else:
+                    return data
 
-    controlpanel = _.strip()
-    return controlpanel
+        except FileNotFoundError:
+            Data.initialize(data_file=data_file)
+            return {key: []} if key else {}
+
+        except JSONDecodeError as e:
+            print(f"Error decoding JSON: {e}")
+            return {key: []} if key else {}

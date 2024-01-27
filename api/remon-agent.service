@@ -1,0 +1,18 @@
+[Unit]
+Description=Remote Monitoring Agent
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/pathtodir/
+ExecStart=/usr/bin/env bash /pathtodir/start.sh
+Restart=always
+RestartSec=5s
+TimeoutStartSec=900
+TimeoutStopSec=900
+RuntimeMaxSec=infinity
+SyslogIdentifier = remon-agent
+PIDFile=/tmp/limoo-agent.pid
+
+[Install]
+WantedBy=multi-user.target
