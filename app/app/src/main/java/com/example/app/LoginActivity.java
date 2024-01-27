@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         gitRepoLink.setOnClickListener(v -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/"));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/KeyMoad/remote-monitoring-agent/"));
             startActivity(browserIntent);
         });
 
