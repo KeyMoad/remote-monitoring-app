@@ -5,6 +5,8 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.Cursor;
+import android.util.Log;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -163,5 +165,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         // Tru if Successful deletion
         return result > 0;
+    }
+
+    public String getHostByUsername(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT " + COLUMN_HOST + " FROM " +
+                TABLE_NAME + " WHERE " + COLUMN_USERNAME + "=?", new String[]{username});
+
+        String host = "";
+        if (cursor != null && cursor.moveToFirst()) {
+            int hostIndex = cursor.getColumnIndex(COLUMN_HOST);
+            if (hostIndex >= 0) {
+                host = cursor.getString(hostIndex);
+            }
+            cursor.close();
+        }
+        db.close();
+
+        Log.d("getHostByHostname", "Final Host: " + host);
+        return host;
     }
 }

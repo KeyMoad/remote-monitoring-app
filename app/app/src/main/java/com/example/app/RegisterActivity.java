@@ -3,6 +3,7 @@ package com.example.app;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.Button;
@@ -13,6 +14,9 @@ public class RegisterActivity extends AppCompatActivity {
     EditText username, password, re_password, ip_domain, passphrase;
     Button register;
     DatabaseHelper dbHelper;
+
+    private static final String DEFAULT_PROTOCOL = "http";
+    private static final String DEFAULT_PORT = "9932";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,14 +60,28 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private static String isValidHost(String host) {
-        return "a";
+        // Check if the host already has a port specified
+        Log.d("isValidHost", "Out port if condition: " + host);
+        if (!host.contains(":")) {
+            Log.d("isValidHost", "In port if condition: " + host);
+            // No port specified, add the default port
+            host = host + ":" + DEFAULT_PORT;
+        }
+
+        // Check if the host starts with http:// or https://
+        if (!host.startsWith("http://") && !host.startsWith("https://")) {
+            host = DEFAULT_PROTOCOL + "://" + host;
+        }
+
+        Log.d("isValidHost", "Final Host: " + host);
+        return host;
     }
 
     private void registerUser() {
         String user = username.getText().toString().trim();
         String pass = password.getText().toString().trim();
         String rePass = re_password.getText().toString().trim();
-        String host = ip_domain.getText().toString().trim();
+        String host = isValidHost(ip_domain.getText().toString().trim());
         String passPhrase = passphrase.getText().toString().trim();
 
         if (user.isEmpty() || pass.isEmpty() || rePass.isEmpty() || host.isEmpty() || passPhrase.isEmpty()) {
