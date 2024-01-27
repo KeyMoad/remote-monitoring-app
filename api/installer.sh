@@ -6,10 +6,9 @@
 arglen=$#
 GITTOKENNAME=$2
 GITTOKEN=$3
-REPONAME=""
-REPOURL=""
+REPONAME="remote-monitoring-agent"
+REPOURL="https://github.com/KeyMoad/remote-monitoring-agent.git"
 SERVICE_NAME="remon-agent"
-PANEL_IP=
 IP=$(hostname -i)
 HOSTNAME=$(hostname -A)
 PYTHON_V="python3.8"
@@ -21,7 +20,7 @@ function uninstall() {
     systemctl disable $SERVICE_NAME >/dev/null 2>&1
 
     # Remove files
-    rm -rf /opt/$REPONAME /etc/systemd/system/$SERVICE_NAME.service /var/log/$SERVICE_NAME.log;
+    rm -rf /opt/$REPONAME /etc/systemd/system/$SERVICE_NAME.service;
 
     # Reload daemon
     systemctl daemon-reload >/dev/null 2>&1
@@ -33,10 +32,9 @@ function install() {
         uninstall;
     fi
 
-
     # Clone git repositorys
     git clone --quiet $REPOURL /opt/$REPONAME/ > /dev/null
-
+    mv /opt/$REPONAME/api /opt/$REPONAME/ && rm -rf /opt/$REPONAME/app /opt/$REPONAME/api
 
     # Config .env
     mv /opt/$REPONAME/example.env /opt/$REPONAME/.env
