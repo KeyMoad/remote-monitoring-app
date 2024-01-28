@@ -10,7 +10,7 @@ __Please ensure that the agent is installed successfully__
 ### Agent Api
 You can install the agent on your server by running this command:
 ```
-bash <( curl -sSL https://raw.githubusercontent.com/KeyMoad/remote-monitoring-agent/main/api/installer.sh [arg] )
+bash <( curl -sSL https://raw.githubusercontent.com/KeyMoad/remote-monitoring-agent/main/api/installer.sh ) [arg]
 ```
 
 #### usage:
