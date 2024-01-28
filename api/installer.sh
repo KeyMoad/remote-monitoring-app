@@ -63,7 +63,7 @@ case "$1" in
     "help")
         help;
     ;;
-    "install" || "update")
+    "install" | "update")
         echo "Installing started ..."
         install;
     ;;
