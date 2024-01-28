@@ -1,11 +1,8 @@
-#!/usr/bin/env python3
-# coding: utf-8
 from logging import getLogger
 from fastapi import FastAPI, Request, status as fastApiStatus
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
 from app.routers import auth_route, cronjob_route,services_route, metrics_route
@@ -17,9 +14,9 @@ app = FastAPI(
     title=APP_TITLE,
     description=APP_DESCRIPTION,
     summary=APP_SUMMARY,
-    docs_url=DOCS_URL,
-    redoc_url=REDOC_URL,
-    license_info=LICENSE_INFO,
+    docs_url=None,
+    redoc_url=None,
+    license_info=LICENSE_INFO
 )
 
 logger = getLogger('uvicorn.error')
@@ -28,10 +25,6 @@ logger = getLogger('uvicorn.error')
 app.add_middleware(
     GZipMiddleware,
     minimum_size=100
-)
-app.add_middleware(
-    TrustedHostMiddleware,
-    allowed_hosts=["*.limoo.host", "*"]
 )
 app.add_middleware(
     CORSMiddleware,

@@ -41,9 +41,9 @@ JWT_SECRET_KEY = "1a094a0ea41912b25364aa2fc9c6e388ed14de309aede75df9ffe533b45673
 JWT_ACCESS_TOKEN_EXPIRE_MINUTES = 1440
 
 # Swagger UI url
-DOCS_URL = config("DOCS_URL", default="/docs", cast=str)
+DOCS_URL = config("DOCS_URL", default=None, cast=str)
 # Disable Redoc UI
-REDOC_URL = config("REDOC_URL", default="/redocs", cast=str)
+REDOC_URL = config("REDOC_URL", default=None, cast=str)
 # Set on title of documentation page
 APP_TITLE = config("APP_TITLE", default="Remote Monitoring Agent", cast=str)
 # Set a little summary of the application
