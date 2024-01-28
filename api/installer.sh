@@ -1,11 +1,7 @@
-#!/usr/bin/env bash
-
-#set -e
+#!/bin/bash
 
 # Variables
 arglen=$#
-GITTOKENNAME=$2
-GITTOKEN=$3
 REPONAME="remote-monitoring-agent"
 REPOURL="https://github.com/KeyMoad/remote-monitoring-agent.git"
 SERVICE_NAME="remon-agent"
@@ -63,29 +59,25 @@ function help() {
     echo -e "use this script with options:\ninstall <token-name> <token>\nupdate <token-name> <token>\nuninstall\nhelp for this"
 }
 
-
-if [ $arglen -eq 0 ]; then
-    help;
-elif [ $arglen -eq 1 ]; then
-    if [ $1 == "uninstall" ]; then
-        uninstall;
-    elif [ $1 == "help" ]; then
+case "$1" in
+    "help")
         help;
-    elif [ $1 == "install" ] || [ $1 == "update" ];then
-        echo "lost token name and token for this option $1"
-        help;
-    else
-        echo "unknown argument: $1"
-        help;
-    fi
-elif [ $arglen -eq 3 ]; then
-    if [ $1 == "install" ] || [ $1 == "update" ]; then
+    ;;
+    "install" || "update")
+        echo "Installing started ..."
         install;
-    else
+    ;;
+    "uninstall")  echo  "Sending SIGINT signal"
+        local DO_THE_UNINSTALL=""
+        until [[ "$DO_THE_UNINSTALL" =~ ^(yes|YES|y|Y|no|NO|n|N)$ ]]; do
+            read -e -p "Are you sure you want to uninstall RMAgent Service [yes/no]? " DO_THE_UNINSTALL
+        done
+        if [[ "$DO_THE_UNINSTALL" =~ ^(yes|YES|y|Y)$ ]]; then
+            uninstall;
+        fi
+    ;;
+    *)
         echo "unknown argument: $1"
         help;
-    fi
-else
-    echo "unknown argument: $1"
-    help;
-fi
+    ;;
+esac

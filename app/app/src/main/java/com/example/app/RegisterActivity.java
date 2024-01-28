@@ -10,8 +10,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -170,10 +168,5 @@ public class RegisterActivity extends AppCompatActivity {
         } else {
             Toast.makeText(RegisterActivity.this, "Username already exists!", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    // Method to handle Connection Test
-    private void connectionTest () {
-        // TODO
     }
 }
