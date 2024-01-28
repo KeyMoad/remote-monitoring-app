@@ -3,7 +3,7 @@ from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi import HTTPException, status as FastApiStatus
 
-from typing import Annotated
+from typing import Union
 
 from app.schemas.services_schemas import ServiceList, AddService
 from app.module.services import *
@@ -42,7 +42,7 @@ def add_service(
 
 @router.get("/service/list", response_model=ServiceList)
 def get_service_list(
-    list_type: Annotated[str, None] = None,
+    list_type: Union[str, None] = None,
     validate_token: Header = Depends(validate_token)
 ):
     """

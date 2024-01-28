@@ -109,19 +109,13 @@
                 android:orientation="horizontal"
                 android:layout_marginBottom="95dp">
 
-                <!-- Test Connection Button -->
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/buttonTestConnection"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Connection Test" />
-
                 <!-- Register Button -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonRegister"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_marginLeft="28dp"
+                    android:layout_marginRight="28dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
                     android:text="Register" />
             </LinearLayout>
 
