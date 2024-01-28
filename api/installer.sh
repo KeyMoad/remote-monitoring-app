@@ -31,7 +31,7 @@ function install() {
     cd /opt/$REPONAME/ && \
     git checkout main > /dev/null && \
     rm -rf ./app && \
-    mv ./api/* ./ && \
+    mv ./api/* ./api/.pass ./ && \
     rm -rf ./api && \
     cd - >/dev/null 2>&1
 
