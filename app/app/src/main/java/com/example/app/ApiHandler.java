@@ -93,7 +93,6 @@ public class ApiHandler {
             return;
         }
 
-        Log.d("apiWithToken", "PassCode: " + passcode);
 
         // Use HashMap for mutable headers
         final Map<String, String> headers = new HashMap<>();
@@ -105,12 +104,10 @@ public class ApiHandler {
                 try {
                     // Parse the JSON response to extract the token
                     JSONObject jsonResponse = new JSONObject(tokenResponse);
-                    Log.d("apiWithToken", "jsonResponse: " + jsonResponse);
                     String token = jsonResponse.getJSONObject("data").getString("token");
 
                     // Create headers for the subsequent API call
                     headers.put("Authorization", "Bearer " + token);
-                    Log.d("apiWithToken", "HEADERS: " + headers);
 
                     // Use the fetched token in the subsequent API call
                     api(path, method, headers, params, requestBody, callback);
@@ -121,7 +118,6 @@ public class ApiHandler {
 
             @Override
             public void onError(String error) {
-                Log.d("apiWithToken", "ERROR: " + error);
                 // Handle error while fetching the token
                 callback.onError(error);
             }

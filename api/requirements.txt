@@ -3,7 +3,6 @@ python-decouple==3.8
 python-dotenv==1.0.0
 python-jose==3.3.0
 uvicorn==0.25.0
-requests==2.31.0
 python-crontab==3.0.0
 croniter==2.0.1
 psutil==5.9.8

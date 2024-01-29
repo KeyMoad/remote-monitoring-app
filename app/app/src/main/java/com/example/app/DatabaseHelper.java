@@ -182,7 +182,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         db.close();
 
-        Log.d("getHostByHostname", "Final Host: " + host);
         return host;
     }
 
