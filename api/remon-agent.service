@@ -12,7 +12,7 @@ TimeoutStartSec=900
 TimeoutStopSec=900
 RuntimeMaxSec=infinity
 SyslogIdentifier = remon-agent
-PIDFile=/tmp/limoo-agent.pid
+PIDFile=/tmp/remon-agent.pid
 
 [Install]
 WantedBy=multi-user.target

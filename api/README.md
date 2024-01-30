@@ -8,23 +8,25 @@ api
 │   │   │
 │   │   ├── __init__.py
 │   │   │
+│   │   ├── authentication.py
+│   │   │
 │   │   ├── cronjob.py
 │   │   │
-│   │   ├── service.py
+│   │   ├── metrics.py
 │   │   │
-│   │   └── metric.py
+│   │   └── service.py
 │   │
 │   ├── routers
 │   │   │
 │   │   ├── __init__.py
 │   │   │
-│   │   ├── action.py
+│   │   ├── auth_route.py
 │   │   │
-│   │   ├── auth.py
+│   │   ├── cronjob_route.py
 │   │   │
-│   │   ├── listing.py
+│   │   ├── metric_route.py
 │   │   │
-│   │   └── status.py
+│   │   └── service_route.py
 │   │
 │   ├── schemas
 │   │   │
@@ -34,7 +36,9 @@ api
 │   │   │
 │   │   ├── cronjob_schemas.py
 │   │   │
-│   │   └── status_schemas.py
+│   │   ├── metrics_schemas.py
+│   │   │
+│   │   └── services_schemas.py
 │   │
 │   ├── __init__.py
 │   │
@@ -44,9 +48,7 @@ api
 │
 ├── __init__.py
 │
-├── .app_jobs.lock
-│
-├── .gitignore
+├── .pass
 │
 ├── example.env
 │

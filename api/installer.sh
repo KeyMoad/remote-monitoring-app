@@ -77,7 +77,7 @@ case "$1" in
         install;
     ;;
     "uninstall")
-        local DO_THE_UNINSTALL=""
+        DO_THE_UNINSTALL=""
         until [[ "$DO_THE_UNINSTALL" =~ ^(yes|YES|y|Y|no|NO|n|N)$ ]]; do
             read -e -p "Are you sure you want to uninstall RMAgent Service [yes/no]? " DO_THE_UNINSTALL
         done
