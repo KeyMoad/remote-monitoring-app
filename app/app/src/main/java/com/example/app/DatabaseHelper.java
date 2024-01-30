@@ -70,14 +70,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // Helper method to convert byte array to hexadecimal string
-    private String bytesToHex(byte[] bytes) {
-        StringBuilder hexString = new StringBuilder(2 * bytes.length);
-        for (byte b : bytes) {
-            hexString.append(String.format("%02x", b));
-        }
-        return hexString.toString();
-    }
 
     // Method to add user to the database with salted and hashed password
     public boolean addUser(String username, String password, String host, String passphrase) {
