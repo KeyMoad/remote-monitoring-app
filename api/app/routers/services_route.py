@@ -11,7 +11,7 @@ from app.module.authentication import validate_token
 
 
 router = APIRouter()
-action = ServiceAction(Data.load("services"))
+
 
 @router.post("/service/add")
 def add_service(
@@ -54,6 +54,7 @@ def get_service_list(
         Example Usage:
             GET /service/list
     """
+    action = ServiceAction(Data.load("services"))
     if list_type != None:
         if list_type == "active":
             services: list = action.active_services()
@@ -86,6 +87,7 @@ def status(
     service_name: str,
     validate_token: Header = Depends(validate_token)
 ):
+    action = ServiceAction(Data.load("services"))
     result = action.service_status(service_name=service_name)
 
     content = {
@@ -106,6 +108,7 @@ def stop(
     service_name: str,
     validate_token: Header = Depends(validate_token)
 ):
+    action = ServiceAction(Data.load("services"))
     result = action.stop_service(service_name=service_name)
 
     content = {
@@ -126,6 +129,7 @@ def start(
     service_name: str,
     validate_token: Header = Depends(validate_token)
 ):
+    action = ServiceAction(Data.load("services"))
     result = action.start_service(service_name=service_name)
 
     content = {
