@@ -11,18 +11,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
-    EditText username, password;
-    TextView noAccountTextView;
-    Button login;
-    ImageView gitRepoLink;
-    DatabaseHelper dbHelper; // DatabaseHelper instance
+    private EditText username, password;
+    private TextView noAccountTextView;
+    private Button login;
+    private ImageView gitRepoLink;
+    private DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        dbHelper = new DatabaseHelper(this); // Initialize DatabaseHelper
+        dbHelper = new DatabaseHelper(this);
 
         username = findViewById(R.id.editTextUsername);
         password = findViewById(R.id.editTextPassword);

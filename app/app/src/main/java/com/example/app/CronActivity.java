@@ -24,6 +24,7 @@ public class CronActivity extends AppCompatActivity {
 
     private ApiHandler apiHandler;
     private String selectedCronName = null;
+    private Logger logger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,7 @@ public class CronActivity extends AppCompatActivity {
             finish();
             return;
         }
+        logger = new Logger(loggedInUsername, getApplicationContext());
         apiHandler = new ApiHandler(this, loggedInUsername);
 
         // Disable delete cron button for initial
@@ -96,6 +98,8 @@ public class CronActivity extends AppCompatActivity {
                 handleApiError("Cron list Error", error);
             }
         });
+
+        logger.writeLog("Info", "Fetched cron list");
     }
 
     private void updateListCronListView(String response) {
@@ -156,12 +160,16 @@ public class CronActivity extends AppCompatActivity {
                 // Handle success, for example, refresh the cron job list
                 fetchCronList();
                 Toast.makeText(CronActivity.this, "Cron job created successfully", Toast.LENGTH_SHORT).show();
+
+                logger.writeLog("Info", "Created cron job: " + "name: " + newCronName + " Command: " + newCronCommand);
             }
 
             @Override
             public void onError(String error) {
                 String apiError = isInvalidCronFormatError(error);
                 handleApiError("Error: ", apiError);
+
+                logger.writeLog("Error", "Failed to create cron job: " + apiError);
             }
         });
     }
@@ -205,17 +213,23 @@ public class CronActivity extends AppCompatActivity {
                     // Handle success, for example, refresh the cron job list
                     fetchCronList();
                     Toast.makeText(CronActivity.this, "Cron job deleted successfully", Toast.LENGTH_SHORT).show();
+
+                    logger.writeLog("Info", "Deleted cron job: " + selectedCronName);
                 }
 
                 @Override
                 public void onError(String error) {
                     // Handle the error, display a generic error message
                     handleApiError("Delete Cron Job Error", error);
+
+                    logger.writeLog("Error", "Failed to delete cron job: " + selectedCronName);
                 }
             });
         } else {
             // If no cron is selected, display a message or handle it accordingly
             Toast.makeText(this, "No cron selected for deletion", Toast.LENGTH_SHORT).show();
+
+            logger.writeLog("Warning", "Attempted to delete cron job with no selection");
         }
     }
 
