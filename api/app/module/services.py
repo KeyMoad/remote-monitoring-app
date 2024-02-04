@@ -5,13 +5,6 @@ from app.utils import run_bash, Data
 
 class ServiceAction():
     def __init__(self, data: list) -> None:
-        """
-        Database constructor initializes the Database object with a specified data file.
-
-        Args:
-        - data_file (str): The path to the data file. Defaults to Const.DATA_FILE.
-
-        """
         self.data: list = data
 
     def service_status(self, service_name: str):

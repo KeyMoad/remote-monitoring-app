@@ -25,6 +25,7 @@ public class ServiceActivity extends AppCompatActivity {
     private Spinner servicesList;
 
     private ApiHandler apiHandler;
+    private Logger logger;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +47,7 @@ public class ServiceActivity extends AppCompatActivity {
             finish();
             return;
         }
+        logger = new Logger(loggedInUsername, getApplicationContext());
         apiHandler = new ApiHandler(this, loggedInUsername);
 
         fetchServiceList();
@@ -69,9 +71,9 @@ public class ServiceActivity extends AppCompatActivity {
         }
 
         // Create a JSON object with the new cron job details
-        JSONObject newCronJson = new JSONObject();
+        JSONObject newServiceJson = new JSONObject();
         try {
-            newCronJson.put("name", serviceName);
+            newServiceJson.put("name", serviceName);
         } catch (JSONException e) {
             e.printStackTrace();
             Toast.makeText(this, "Error creating JSON object", Toast.LENGTH_SHORT).show();
@@ -79,17 +81,21 @@ public class ServiceActivity extends AppCompatActivity {
         }
 
         // Call the apiWithToken method for adding a new service
-        apiHandler.apiWithToken("/service/add", ApiHandler.HttpMethod.POST, null, newCronJson.toString(), new ApiHandler.ResponseCallback() {
+        apiHandler.apiWithToken("/service/add", ApiHandler.HttpMethod.POST, null, newServiceJson.toString(), new ApiHandler.ResponseCallback() {
             @Override
             public void onSuccess(String response) {
                 // Handle success, for example, refresh the cron job list
                 fetchServiceList();
                 Toast.makeText(ServiceActivity.this, "New Service added successfully", Toast.LENGTH_SHORT).show();
+
+                logger.writeLog("Info", "New Service added successfully: " + serviceName);
             }
 
             @Override
             public void onError(String error) {
                 handleApiError("Error adding new service! Please read README of project", error);
+
+                logger.writeLog("Error", "Error fetching CPU load: " + error);
             }
         });
     }
@@ -100,11 +106,15 @@ public class ServiceActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String response) {
                 handleFetchServiceList(response);
+
+                logger.writeLog("Info", "Fetched services successfully");
             }
 
             @Override
             public void onError(String error) {
                 handleApiError("Error fetching service list: ", error);
+
+                logger.writeLog("Error", "Error fetching services list load: " + error);
             }
         });
     }
@@ -157,11 +167,15 @@ public class ServiceActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String response) {
                 handleStatusService(response);
+
+                logger.writeLog("Info", "Get status of service " + selectedService);
             }
 
             @Override
             public void onError(String error) {
                 handleApiError("Error fetching status of the service: ", error);
+
+                logger.writeLog("Error", "Error fetching service " + selectedService + " status: " + error);
             }
         });
     }
@@ -209,11 +223,15 @@ public class ServiceActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String response) {
                 handleStartService(response);
+
+                logger.writeLog("Info", "Started service: " + selectedService);
             }
 
             @Override
             public void onError(String error) {
                 handleApiError("Error starting the service: ", error);
+
+                logger.writeLog("Error", "Error starting the service " + selectedService + ": " + error);
             }
         });
     }
@@ -256,11 +274,15 @@ public class ServiceActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String response) {
                 handleStopService(response);
+
+                logger.writeLog("Info", "Stopped service: " + selectedService);
             }
 
             @Override
             public void onError(String error) {
                 handleApiError("Error stopping the service: ", error);
+
+                logger.writeLog("Error", "Error stopping the service " + selectedService + ": " + error);
             }
         });
     }

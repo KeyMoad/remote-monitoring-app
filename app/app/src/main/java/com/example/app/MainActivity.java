@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView memoryUsageTextView;
     private DatabaseHelper dbHelper;
     private ApiHandler apiHandler;
+    private Logger logger;
     private final Handler handler = new Handler();
     private final long delayMillis = 15 * 1000;
 
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         CardView serviceSectionCardView = findViewById(R.id.section_action);
         CardView cronSectionCardView = findViewById(R.id.section_cron);
         CardView deleteSectionCardView = findViewById(R.id.section_delete);
+        CardView historySectionCardView = findViewById(R.id.section_history);
 
         // Replace these with the actual IDs from your XML layout
         loadAverageTextView = findViewById(R.id.load_average_textview);
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
+        logger = new Logger(loggedInUsername, getApplicationContext());
         apiHandler = new ApiHandler(this, loggedInUsername);
 
         // Set up listeners for CardViews
@@ -69,6 +72,11 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "Deletion succeed !", Toast.LENGTH_SHORT).show();
         });
 
+        historySectionCardView.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
+            startActivity(intent);
+        });
+
         // Schedule periodic fetching after the initial fetch
         long initialDelayMillis = 0;
         handler.postDelayed(new Runnable() {
@@ -87,11 +95,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String response) {
                 updateCpuLoadTextView(response);
+
+                logger.writeLog("Info", "Fetched CPU load successfully");
             }
 
             @Override
             public void onError(String error) {
                 handleApiError("Metrics Error", error);
+
+                logger.writeLog("Error", "Error fetching CPU load: " + error);
             }
         });
     }
@@ -115,11 +127,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String response) {
                 updateMemoryUsageTextView(response);
+
+                logger.writeLog("Info", "Fetched Memory usage successfully");
             }
 
             @Override
             public void onError(String error) {
                 handleApiError("Memory Usage Error", error);
+
+                logger.writeLog("Error", "Error fetching Memory usage: " + error);
             }
         });
     }
@@ -152,11 +168,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(String response) {
                 updateLoadAverageTextView(response);
+
+                logger.writeLog("Info", "Fetched Load average successfully");
             }
 
             @Override
             public void onError(String error) {
                 handleApiError("Load Average Error", error);
+
+                logger.writeLog("Error", "Error fetching Load average: " + error);
             }
         });
     }
