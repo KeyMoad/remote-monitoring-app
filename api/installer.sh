@@ -2,7 +2,7 @@
 
 # Variables
 REPONAME="remote-monitoring-agent"
-REPOURL="https://github.com/KeyMoad/remote-monitoring-agent.git"
+REPOURL="https://github.com/KeyMoad/remote-monitoring-app.git"
 SERVICE_NAME="remon-agent"
 PYTHON_V="python3.8"
 

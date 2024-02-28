@@ -1,7 +1,7 @@
 # Remote Monitoring
 
 ### Mobile Application
-You can install the latest app from this repository releases. [Release Page](https://github.com/KeyMoad/remote-monitoring-agent/releases)
+You can install the latest app from this repository releases. [Release Page](https://github.com/KeyMoad/remote-monitoring-app/releases)
 
 To use the app features, after installing app, you should register your server in register page.
 
@@ -10,7 +10,7 @@ __Please ensure that the agent is installed successfully__
 ### Agent Api
 You can install the agent on your server by running this command:
 ```
-bash <( curl -sSL https://raw.githubusercontent.com/KeyMoad/remote-monitoring-agent/main/api/installer.sh ) [arg]
+bash <( curl -sSL https://raw.githubusercontent.com/KeyMoad/remote-monitoring-app/main/api/installer.sh ) [arg]
 ```
 
 #### usage:

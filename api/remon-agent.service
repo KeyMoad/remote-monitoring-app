@@ -1,5 +1,5 @@
 [Unit]
-Description=Remote Monitoring Agent
+Description=Remote Monitoring
 After=network.target
 
 [Service]

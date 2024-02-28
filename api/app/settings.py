@@ -1,5 +1,5 @@
 """
-Remote Monitoring Agent Settings File
+Remote Monitoring Settings File
 
 ***Do not change any variable name in this file***
 
@@ -44,7 +44,7 @@ DOCS_URL = config("DOCS_URL", default=None, cast=str)
 # Disable Redoc UI
 REDOC_URL = config("REDOC_URL", default=None, cast=str)
 # Set on title of documentation page
-APP_TITLE = config("APP_TITLE", default="Remote Monitoring Agent", cast=str)
+APP_TITLE = config("APP_TITLE", default="Remote Monitoring", cast=str)
 # Set a little summary of the application
 APP_SUMMARY = config(
     "APP_SUMMARY", default="Remon Agent Application", cast=str
